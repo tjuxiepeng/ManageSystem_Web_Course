@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="/">
+
+    <!--验证登录-->
+
+    <select id="checkAdmin" parameterType="User" resultType="User">
+  	  select * from admin
+  	  where username=#{username}
+  	        and
+  	        password=#{password};
+    </select>
+
+    <select id="checkUser" parameterType="User" resultType="User">
+        select * from user
+        where username=#{username}
+        and
+        password=#{password};
+    </select>
+
+    <select id="selectAllAdmins" resultType="User">
+        select * from admin;
+    </select>
+
+    <select id="selectAllUsers" resultType="User">
+        select * from user;
+    </select>
+
+    <select id="selectOneUser" parameterType="int" resultType="User">
+        select * from user where id = #{id};
+    </select>
+
+    <select id="selectOneUserId" parameterType="User" resultType="User">
+        select * from user
+        where username = #{username}
+              AND
+              password = #{password};
+    </select>
+
+    <insert id="addOneUser" parameterType="User" statementType="PREPARED"
+            keyProperty="id" useGeneratedKeys="true">
+        insert into user (id,username,password)
+        values (#{id},#{username},#{password});
+    </insert>
+
+    <delete id="deleteOneUser" parameterType="int">
+        delete from user where id = #{id};
+    </delete>
+
+
+    <select id="selectOneAdmin" parameterType="int" resultType="User">
+        select * from admin where id = #{id};
+    </select>
+
+    <delete id="deleteOneAdmin" parameterType="int">
+        delete from admin where id = #{id};
+    </delete>
+
+    <insert id="addOneAdmin" parameterType="User" statementType="PREPARED"
+            keyProperty="id" useGeneratedKeys="true">
+        insert into admin (id,username,password)
+        values (#{id},#{username},#{password});
+    </insert>
+
+
+    <!--公安系统中的通缉犯查询-->
+
+    <select id="selectAllCriminals" resultType="Criminal">
+        select * from criminal_list ;
+    </select>
+
+    <select id="selectSomeCriminals" resultType="Criminal" parameterType="int">
+        SELECT * FROM  criminal_list order by id desc limit #{scope},3;
+    </select>
+
+    <insert id="addOneCriminal" parameterType="Criminal" statementType="PREPARED"
+            keyProperty="id" useGeneratedKeys="true">
+        insert into criminal_list (id,criminalname,gender,num,height,weight,body,phone,photo)
+        values (#{id},#{criminalname},#{gender},#{num},#{height},#{weight},#{body},#{phone},#{photo});
+    </insert>
+
+
+    <insert id="addOneCriminalInto" parameterType="Criminal" statementType="PREPARED"
+            keyProperty="id" useGeneratedKeys="true">
+        insert into criminal_list (criminalname,gender,num,height,weight,body,phone,photo)
+        values (#{criminalname},#{gender},#{num},#{height},#{weight},#{body},#{phone},#{photo});
+    </insert>
+
+    <delete id="deleteOneCriminal" parameterType="int">
+        delete from criminal_list where id = #{id};
+    </delete>
+
+    <select id="selectOneCriminal" parameterType="int" resultType="Criminal">
+        select * from criminal_list where id = #{id};
+    </select>
+
+    <select id="selectOneCriminalByNum" parameterType="String" resultType="Criminal">
+        select * from criminal_list where num = #{num};
+    </select>
+
+    <select id="selectTotalCriminalCount" resultType="int">
+        select count(*) from criminal_list;
+    </select>
+
+
+    <!--举报系统中的通缉犯查询-->
+
+    <insert id="addOneNewCriminal" parameterType="CriminalInfo" >
+        insert into criminal_new (title,content,phone,name)
+        values (#{title},#{content},#{phone},#{name});
+    </insert>
+
+    <select id="selectTotalNewCriminalCount" parameterType="SearchSqlCondition" resultType="int">
+        select count(*) from criminal_list
+        where
+        criminalname like '%${name}%'
+        and
+        num like '%${num}%'
+        and
+        height BETWEEN #{minHeight} and #{maxHeight}
+        AND
+        weight BETWEEN #{minWeight} and #{maxHeight};
+    </select>
+
+    <select id="selectSomeCriminalsByCondition" parameterType="SearchSqlCondition" resultType="Criminal">
+        select * from criminal_list
+        where
+        criminalname like '%${name}%'
+        and
+        num like '%${num}%'
+        and
+        height BETWEEN #{minHeight} and #{maxHeight}
+        AND
+        weight BETWEEN #{minWeight} and #{maxWeight}
+        order by id desc
+        limit #{scope},3;
+    </select>
+
+    <select id="selectAllNewCriminals" resultType="CriminalInfo">
+        select * from criminal_new;
+    </select>
+
+    <delete id="deleteOneNewCriminal" parameterType="int">
+        delete from criminal_new where id = #{id};
+    </delete>
+
+</mapper>
